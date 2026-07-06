@@ -1,0 +1,31 @@
+# AI Assistant directories
+.agents/
+.claude/
+.cursor/
+.windsurf/
+
+# Local project-related
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Build outputs
+dist/
+build/
+.next/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
