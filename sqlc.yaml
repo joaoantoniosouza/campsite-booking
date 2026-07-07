@@ -1,0 +1,22 @@
+version: "2"
+sql:
+  # Per-module convention: each module feature that needs generated queries
+  # adds its own entry here, pointing `queries` at its own
+  # db/queries/<module>/*.sql and `out` at its own
+  # internal/modules/<module>/adapter/repository/sqlc (package name = module).
+  # No entries exist yet in M0 — sqlc generates nothing until a module adds
+  # queries (documented, YAGNI).
+  # SPEC_DEVIATION: `sqlc compile` errors on an empty db/queries/ ("no
+  # queries contained") until the first *.sql query file exists — a real
+  # sqlc constraint, not a config defect. The M0 gate for this task is
+  # `go build ./...` (config-only, no Go code layer), which is unaffected.
+  - engine: "postgresql"
+    schema: "db/migrations"
+    queries: "db/queries"
+    gen:
+      go:
+        package: "sqlc"
+        out: "db/sqlc"
+        sql_package: "pgx/v5"
+        emit_interface: true
+        emit_pointers_for_null_types: true
