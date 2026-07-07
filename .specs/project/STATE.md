@@ -1,8 +1,13 @@
 # State
 
 **Last Updated:** 2026-07-07
-**Current Work:** M0 + M1 + M2 feature specs authored (spec + design + tasks). Cross-feature
-design review completed and correcting edits applied (see AD-006..AD-008). Implementation not yet started.
+**Current Work:** M0 (Foundation & Infrastructure) fully implemented — all 25 tasks across
+`project-skeleton` (14), `data-migration` (5), and `config-runtime` (6) complete, gated, and
+committed. Repo boots: `cmd/server` serves `GET /` (200), `GET /healthz` (200 against live
+Postgres), graceful shutdown on SIGINT/SIGTERM, migrations run via `cmd/migrate`. Full gate green:
+`go build ./... && go vet ./... && go test ./...` (46 unit tests) and
+`go test -tags=integration ./...` (real Postgres via testcontainers-go/Docker) both pass. M1 + M2
+feature specs remain authored (spec + design + tasks) but unimplemented — next up per Todos.
 
 ---
 
@@ -73,6 +78,19 @@ _None._
 
 - **Cross-feature seams need one named owner.** Two features authored in parallel each independently "owned" the same concept twice — the transaction seam (M0 vs M2) and the booking-window math (config vs availability) — producing incompatible interface shapes. When a capability spans a module boundary, pin the owner and the exact port shape in one doc and have the other *cite* it, rather than re-deriving it. (Surfaced by the 2026-07-07 design review; fixed in AD-006/AD-007.)
 - **`Release`-style decrements are not self-protecting.** Unlike a capacity-ceilinged increment, a decrement that only floors at 0 relies entirely on callers for exactly-once; documented as a caller contract in availability rather than assumed.
+- **Toolchain drift on greenfield `go mod init`.** The dev box only had no Go installed; installed
+  1.22.10 user-locally, but `chi/v5` and later `golang.org/x/tools` (for the M0 boundary test)
+  each required a newer Go, auto-bumping `go.mod`'s `go` directive to 1.25.0 via the toolchain
+  mechanism. Not a problem (Go handles it transparently), but don't assume the spec's stated
+  "Go 1.22+" pins the actual toolchain version in `go.mod` after `go get`.
+- **`sqlc compile` errors on zero query files**, even with a valid config and schema ("no queries
+  contained in paths db/queries"). This is expected in M0 (no module has queries yet) — the real
+  gate for the `sqlc.yaml` task is `go build ./...` (config-only, no Go code layer); `sqlc compile`
+  only becomes meaningful once the first module feature adds `db/queries/*.sql`.
+- **Integration tests need Docker.** All `//go:build integration` suites in M0
+  (`postgres`, `pgtest`, `cmd/migrate`, `bootstrap`) spin real `postgres:16-alpine` containers via
+  testcontainers-go — verified working against the local Docker daemon. Future sessions on a
+  different machine should confirm Docker is running before trusting a red integration gate.
 
 ---
 
@@ -93,7 +111,8 @@ _None._
 
 ## Todos
 
-- [ ] Begin implementation with M0 `project-skeleton` → `data-migration` → `config-runtime` (dependency order)
+- [x] Begin implementation with M0 `project-skeleton` → `data-migration` → `config-runtime` (dependency order) — done 2026-07-07
+- [ ] Begin M1 (Identity & Setup): `user-company-registration` → `authentication` → `campsite management` → `system-configuration`
 
 ---
 
