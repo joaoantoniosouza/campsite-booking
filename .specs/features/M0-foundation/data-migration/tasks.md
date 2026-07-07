@@ -1,7 +1,7 @@
 # Data & Migration Layer Tasks
 
 **Design**: `.specs/features/M0-foundation/data-migration/design.md`
-**Status**: Draft
+**Status**: Done
 
 All tasks follow TDD (RED → GREEN → REFACTOR); tests are co-located in the task that creates the
 code (never deferred). Gate commands from TESTING.md: **quick** = `go build ./... && go vet ./... && go test ./...`;
@@ -54,13 +54,13 @@ T1,T2 ──┼─→ T4 (migrate CLI)  [integration, serial]
 
 **Done when**:
 
-- [ ] `NewPool` returns a pinged `*pgxpool.Pool`; zero-value tuning fields get sane defaults.
-- [ ] `NewPool` with an unreachable/invalid DSN returns a wrapped error within `ConnectTimeout`, no panic (**unit**, table-driven).
-- [ ] `WithTx` commits on nil, rolls back on error, rolls back + re-panics on panic; `fn` receives the tx via `ctx` (not as an argument) and writes through `Executor(ctx, pool)` (**integration**, bare inline container; test creates its own temp table).
-- [ ] `Executor(ctx, pool)` returns a tx-backed querier when called inside `WithTx` and the pool when called outside it (**integration**).
-- [ ] `go get github.com/jackc/pgx/v5` recorded in `go.mod`.
-- [ ] Gate check passes: `go test -tags=integration ./internal/platform/postgres/...`
-- [ ] Test count: 6 tests pass (2 unit error-path cases + 3 WithTx integration cases + 1 Executor resolution case), no silent deletions.
+- [x] `NewPool` returns a pinged `*pgxpool.Pool`; zero-value tuning fields get sane defaults.
+- [x] `NewPool` with an unreachable/invalid DSN returns a wrapped error within `ConnectTimeout`, no panic (**unit**, table-driven).
+- [x] `WithTx` commits on nil, rolls back on error, rolls back + re-panics on panic; `fn` receives the tx via `ctx` (not as an argument) and writes through `Executor(ctx, pool)` (**integration**, bare inline container; test creates its own temp table).
+- [x] `Executor(ctx, pool)` returns a tx-backed querier when called inside `WithTx` and the pool when called outside it (**integration**).
+- [x] `go get github.com/jackc/pgx/v5` recorded in `go.mod`.
+- [x] Gate check passes: `go test -tags=integration ./internal/platform/postgres/...`
+- [x] Test count: 6 tests pass (2 unit error-path cases + 3 WithTx integration cases + 1 Executor resolution case), no silent deletions.
 
 **Verify**: `go test -tags=integration ./internal/platform/postgres/ -run 'TestNewPool|TestWithTx|TestExecutor' -v` → PASS.
 
@@ -86,14 +86,14 @@ T1,T2 ──┼─→ T4 (migrate CLI)  [integration, serial]
 
 **Done when**:
 
-- [ ] Migration files follow `NNNNNN_name.up.sql`/`.down.sql`; `embed.FS` + `MigrationsDir` exported from package `db`.
-- [ ] Baseline up enables `btree_gist`; down drops it; no domain tables created.
-- [ ] `Up` on a clean DB → `btree_gist` present, `schema_migrations` version=1; second `Up` → `ErrNoChange` handled as success (**integration**).
-- [ ] `Down` reverts baseline (extension gone, version nil); `Version` returns `(0,false,nil)` on empty DB (**integration**).
-- [ ] `RunMigrations` returns nil on success, error on dirty/failed state (**integration**).
-- [ ] `go get github.com/golang-migrate/migrate/v4` recorded in `go.mod`.
-- [ ] Gate check passes: `go test -tags=integration ./internal/platform/postgres/...`
-- [ ] Test count: 4 integration tests pass (up+idempotent, down+version, RunMigrations success, dirty/error), no silent deletions.
+- [x] Migration files follow `NNNNNN_name.up.sql`/`.down.sql`; `embed.FS` + `MigrationsDir` exported from package `db`.
+- [x] Baseline up enables `btree_gist`; down drops it; no domain tables created.
+- [x] `Up` on a clean DB → `btree_gist` present, `schema_migrations` version=1; second `Up` → `ErrNoChange` handled as success (**integration**).
+- [x] `Down` reverts baseline (extension gone, version nil); `Version` returns `(0,false,nil)` on empty DB (**integration**).
+- [x] `RunMigrations` returns nil on success, error on dirty/failed state (**integration**).
+- [x] `go get github.com/golang-migrate/migrate/v4` recorded in `go.mod`.
+- [x] Gate check passes: `go test -tags=integration ./internal/platform/postgres/...`
+- [x] Test count: 4 integration tests pass (up+idempotent, down+version, RunMigrations success, dirty/error), no silent deletions.
 
 **Verify**: `go test -tags=integration ./internal/platform/postgres/ -run TestMigrate -v` → PASS; migrated DB has `btree_gist` in `pg_extension`.
 
@@ -119,13 +119,13 @@ T1,T2 ──┼─→ T4 (migrate CLI)  [integration, serial]
 
 **Done when**:
 
-- [ ] `Setup` returns a pool to a migrated Postgres 16 DB (`btree_gist` present ⇒ parity) (**integration**).
-- [ ] Two subtests get isolated state: subtest A writes a temp row, subtest B (after Restore) does not see it (**integration**).
-- [ ] Concurrency capability proven: N goroutines run committed `WithTx` inserts against the shared DB and all land (**integration**).
-- [ ] Container reused across calls (single `Run`), terminated on package cleanup.
-- [ ] `go get github.com/testcontainers/testcontainers-go` + `.../modules/postgres` recorded in `go.mod`.
-- [ ] Gate check passes: `go test -tags=integration ./internal/platform/postgres/pgtest/...`
-- [ ] Test count: 3 integration tests pass (migrated-pool, isolation, concurrency), no silent deletions.
+- [x] `Setup` returns a pool to a migrated Postgres 16 DB (`btree_gist` present ⇒ parity) (**integration**).
+- [x] Two subtests get isolated state: subtest A writes a temp row, subtest B (after Restore) does not see it (**integration**).
+- [x] Concurrency capability proven: N goroutines run committed `WithTx` inserts against the shared DB and all land (**integration**).
+- [x] Container reused across calls (single `Run`), terminated on package cleanup.
+- [x] `go get github.com/testcontainers/testcontainers-go` + `.../modules/postgres` recorded in `go.mod`.
+- [x] Gate check passes: `go test -tags=integration ./internal/platform/postgres/pgtest/...`
+- [x] Test count: 3 integration tests pass (migrated-pool, isolation, concurrency), no silent deletions.
 
 **Verify**: `go test -tags=integration ./internal/platform/postgres/pgtest/ -v` → PASS; single container started for the package.
 
@@ -151,10 +151,10 @@ T1,T2 ──┼─→ T4 (migrate CLI)  [integration, serial]
 
 **Done when**:
 
-- [ ] `run(["up"], dsn)` then `run(["version"], dsn)` against a container applies baseline and reports version 1 (**integration**).
-- [ ] Unknown subcommand / missing DSN → non-nil error (non-zero exit) (**integration**).
-- [ ] Gate check passes: `go test -tags=integration ./cmd/migrate/...`
-- [ ] Test count: 2 integration tests pass (up+version happy path, arg/DSN error), no silent deletions.
+- [x] `run(["up"], dsn)` then `run(["version"], dsn)` against a container applies baseline and reports version 1 (**integration**).
+- [x] Unknown subcommand / missing DSN → non-nil error (non-zero exit) (**integration**).
+- [x] Gate check passes: `go test -tags=integration ./cmd/migrate/...`
+- [x] Test count: 2 integration tests pass (up+version happy path, arg/DSN error), no silent deletions.
 
 **Verify**: `go test -tags=integration ./cmd/migrate/ -v` → PASS; `go run ./cmd/migrate version -dsn "$DATABASE_URL"` prints `1`.
 
@@ -180,11 +180,11 @@ T1,T2 ──┼─→ T4 (migrate CLI)  [integration, serial]
 
 **Done when**:
 
-- [ ] `sqlc.yaml` targets pgx/v5 + `db/migrations` schema + `db/queries` queries; per-module output convention documented in a comment.
-- [ ] `sqlc compile` (or `sqlc vet`) parses config + baseline schema with no error (no queries ⇒ nothing generated).
-- [ ] No generated Go committed in M0 (deferred to first module feature — documented).
-- [ ] Gate check passes: `go build ./...`
-- [ ] Test count: N/A (config only; no code layer created — coverage matrix requires no test type).
+- [x] `sqlc.yaml` targets pgx/v5 + `db/migrations` schema + `db/queries` queries; per-module output convention documented in a comment.
+- [x] `sqlc compile` (or `sqlc vet`) parses config + baseline schema with no error (no queries ⇒ nothing generated).
+- [x] No generated Go committed in M0 (deferred to first module feature — documented).
+- [x] Gate check passes: `go build ./...`
+- [x] Test count: N/A (config only; no code layer created — coverage matrix requires no test type).
 
 **Verify**: `sqlc compile` exits 0; `go build ./...` succeeds.
 

@@ -1,7 +1,7 @@
 # Config & Runtime Tasks
 
 **Design**: `.specs/features/M0-foundation/config-runtime/design.md`
-**Status**: Draft
+**Status**: Done
 
 ---
 
@@ -43,15 +43,15 @@ graph TD
 
 **Done when**:
 
-- [ ] `Config` and nested types match the design's Data Models exactly.
-- [ ] `LoadFrom(getenv)` applies all defaults and parses every var in the env→field map.
-- [ ] Missing `DATABASE_URL`/`SESSION_SECRET` → one aggregated error (both named) wrapping
+- [x] `Config` and nested types match the design's Data Models exactly.
+- [x] `LoadFrom(getenv)` applies all defaults and parses every var in the env→field map.
+- [x] Missing `DATABASE_URL`/`SESSION_SECRET` → one aggregated error (both named) wrapping
       `ErrInvalidConfig`; no partial config returned.
-- [ ] `SESSION_SECRET` < 32 chars, bad `HTTP_PORT`, unknown `LOG_LEVEL`/`LOG_FORMAT`/`APP_ENV`
+- [x] `SESSION_SECRET` < 32 chars, bad `HTTP_PORT`, unknown `LOG_LEVEL`/`LOG_FORMAT`/`APP_ENV`
       each produce a validation error naming the var.
-- [ ] `Load()` delegates to `LoadFrom(os.Getenv)`.
-- [ ] Gate check passes: `go build ./... && go vet ./... && go test ./...`
-- [ ] Test count: 8 unit tests pass (valid load w/ defaults; each required-missing; aggregated
+- [x] `Load()` delegates to `LoadFrom(os.Getenv)`.
+- [x] Gate check passes: `go build ./... && go vet ./... && go test ./...`
+- [x] Test count: 8 unit tests pass (valid load w/ defaults; each required-missing; aggregated
       both-missing; short secret; bad port; bad level/format) — no silent deletions.
 
 **Tests**: unit (config is `internal/platform/*` but pure — "unit where pure" per matrix)
@@ -80,12 +80,12 @@ asserting every required key the loader reads is present.
 
 **Done when**:
 
-- [ ] `.env.example` lists all 10 vars from the env→field map with placeholder values + comments.
-- [ ] Drift test parses `.env.example` keys and fails if any required var (`DATABASE_URL`,
+- [x] `.env.example` lists all 10 vars from the env→field map with placeholder values + comments.
+- [x] Drift test parses `.env.example` keys and fails if any required var (`DATABASE_URL`,
       `SESSION_SECRET`) or any other mapped key is absent.
-- [ ] Placeholder values for required keys satisfy `LoadFrom` (secret >= 32 chars).
-- [ ] Gate check passes: `go build ./... && go vet ./... && go test ./...`
-- [ ] Test count: 1 unit test passes (drift guard) — no silent deletions.
+- [x] Placeholder values for required keys satisfy `LoadFrom` (secret >= 32 chars).
+- [x] Gate check passes: `go build ./... && go vet ./... && go test ./...`
+- [x] Test count: 1 unit test passes (drift guard) — no silent deletions.
 
 **Tests**: unit (static file + pure parsing test)
 **Gate**: quick
@@ -113,11 +113,11 @@ configured level, to stderr.
 
 **Done when**:
 
-- [ ] `LogJSON` → JSON handler, `LogText` → text handler; `Level` respected (a debug record is
+- [x] `LogJSON` → JSON handler, `LogText` → text handler; `Level` respected (a debug record is
       dropped at info level).
-- [ ] Tests capture output via a `bytes.Buffer`-backed handler / writer (no real I/O).
-- [ ] Gate check passes: `go build ./... && go vet ./... && go test ./...`
-- [ ] Test count: 3 unit tests pass (json format, text format, level filtering) — no silent
+- [x] Tests capture output via a `bytes.Buffer`-backed handler / writer (no real I/O).
+- [x] Gate check passes: `go build ./... && go vet ./... && go test ./...`
+- [x] Test count: 3 unit tests pass (json format, text format, level filtering) — no silent
       deletions.
 
 **Tests**: unit (pure constructor — "unit where pure" per matrix)
@@ -146,14 +146,14 @@ configured level, to stderr.
 
 **Done when**:
 
-- [ ] Middleware wraps the `ResponseWriter` to capture status + bytes; emits exactly one record
+- [x] Middleware wraps the `ResponseWriter` to capture status + bytes; emits exactly one record
       with method, path, status, bytes, duration_ms.
-- [ ] Request id from chi is included when present, omitted when absent (both cases tested).
-- [ ] `FromContext` returns the injected request logger inside a handler, and `slog.Default()`
+- [x] Request id from chi is included when present, omitted when absent (both cases tested).
+- [x] `FromContext` returns the injected request logger inside a handler, and `slog.Default()`
       when none was injected.
-- [ ] No secret values logged.
-- [ ] Gate check passes: `go build ./... && go vet ./... && go test ./...`
-- [ ] Test count: 4 unit tests pass (record fields; with request id; without request id;
+- [x] No secret values logged.
+- [x] Gate check passes: `go build ./... && go vet ./... && go test ./...`
+- [x] Test count: 4 unit tests pass (record fields; with request id; without request id;
       FromContext fallback) — no silent deletions.
 
 **Tests**: unit (httptest, no DB — "unit where pure" per matrix middleware carve-out)
@@ -182,12 +182,12 @@ ok, 503 on ping error, bounded timeout).
 
 **Done when**:
 
-- [ ] `Pinger` interface exposes only `Ping(ctx) error`.
-- [ ] Fake pinger returning nil → 200 + `{status:ok,db:ok}`; returning error → 503 +
+- [x] `Pinger` interface exposes only `Ping(ctx) error`.
+- [x] Fake pinger returning nil → 200 + `{status:ok,db:ok}`; returning error → 503 +
       `{status:degraded,db:down}`; handler never panics.
-- [ ] Ping uses a bounded `context.WithTimeout`; a fake that blocks past the timeout → 503.
-- [ ] Gate check passes: `go build ./... && go vet ./... && go test ./...`
-- [ ] Test count: 3 unit tests pass (ok, error, timeout) — no silent deletions.
+- [x] Ping uses a bounded `context.WithTimeout`; a fake that blocks past the timeout → 503.
+- [x] Gate check passes: `go build ./... && go vet ./... && go test ./...`
+- [x] Test count: 3 unit tests pass (ok, error, timeout) — no silent deletions.
 
 **Tests**: unit (pure handler with fake Pinger — "unit where pure" per matrix)
 **Gate**: quick
@@ -216,14 +216,14 @@ Postgres testcontainer proving readiness + request logging + config-abort.
 
 **Done when**:
 
-- [ ] Bootstrap loads config first; a missing required var aborts startup (error surfaced, no
+- [x] Bootstrap loads config first; a missing required var aborts startup (error surfaced, no
       listener opened) — asserted in-test.
-- [ ] Against a live Postgres testcontainer, `GET /healthz` → 200 (real `*pgxpool.Pool` satisfies
+- [x] Against a live Postgres testcontainer, `GET /healthz` → 200 (real `*pgxpool.Pool` satisfies
       `health.Pinger`); with the pool closed/unreachable → 503.
-- [ ] A request through the assembled router emits one structured request-log record (captured
+- [x] A request through the assembled router emits one structured request-log record (captured
       via an injected slog handler).
-- [ ] Gate check passes: `go test -tags=integration ./...`
-- [ ] Test count: 3 integration tests pass (healthz 200 readiness; healthz 503 db-down; config
+- [x] Gate check passes: `go test -tags=integration ./...`
+- [x] Test count: 3 integration tests pass (healthz 200 readiness; healthz 503 db-down; config
       abort) — no silent deletions.
 
 **Tests**: integration (real Postgres; platform wiring per matrix)

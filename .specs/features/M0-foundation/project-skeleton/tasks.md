@@ -1,7 +1,7 @@
 # Project Skeleton & Module Boundaries Tasks
 
 **Design**: `.specs/features/M0-foundation/project-skeleton/design.md`
-**Status**: Draft
+**Status**: Done
 
 > **Test note (read first):** This feature wires only `internal/platform/*` and the module
 > skeleton. Per TESTING.md the platform row is *"integration (unit where pure)"* — every test here
@@ -83,9 +83,9 @@ T12 → T14
 
 **Done when**:
 
-- [ ] `go.mod` declares the module path and `go 1.22`
-- [ ] `go get github.com/go-chi/chi/v5` and `github.com/gorilla/sessions` recorded
-- [ ] Gate check passes: `go build ./...`
+- [x] `go.mod` declares the module path and `go 1.22`
+- [x] `go get github.com/go-chi/chi/v5` and `github.com/gorilla/sessions` recorded
+- [x] Gate check passes: `go build ./...`
 
 **Tests**: none
 **Gate**: build
@@ -114,10 +114,10 @@ import rule (ARCHITECTURE §3) and directory placeholders for assets/db.
 
 **Done when**:
 
-- [ ] All seven modules exist with `domain/app/adapter/{repository,http}/public` `doc.go` files
-- [ ] Each `doc.go` package name equals its leaf dir; comment states the allowed/forbidden imports
-- [ ] `internal/platform/*` and `internal/shared/*` placeholder packages exist
-- [ ] Gate check passes: `go build ./...`
+- [x] All seven modules exist with `domain/app/adapter/{repository,http}/public` `doc.go` files
+- [x] Each `doc.go` package name equals its leaf dir; comment states the allowed/forbidden imports
+- [x] `internal/platform/*` and `internal/shared/*` placeholder packages exist
+- [x] Gate check passes: `go build ./...`
 
 **Tests**: none (scaffolding, no logic)
 **Gate**: build
@@ -143,9 +143,9 @@ import rule (ARCHITECTURE §3) and directory placeholders for assets/db.
 
 **Done when**:
 
-- [ ] Handler that panics returns `500`; test asserts server goroutine survives (no re-panic)
-- [ ] Gate check passes: `go build ./... && go vet ./... && go test ./...`
-- [ ] Test count: 2 tests pass (panic→500, normal pass-through) (no silent deletions)
+- [x] Handler that panics returns `500`; test asserts server goroutine survives (no re-panic)
+- [x] Gate check passes: `go build ./... && go vet ./... && go test ./...`
+- [x] Test count: 2 tests pass (panic→500, normal pass-through) (no silent deletions)
 
 **Tests**: unit
 **Gate**: quick
@@ -172,10 +172,10 @@ injected `*slog.Logger`.
 
 **Done when**:
 
-- [ ] Test injects a `slog.Handler` capturing records; asserts method/path/status/duration logged
-- [ ] Status code correctly captured via a wrapped `ResponseWriter`
-- [ ] Gate check passes: `go build ./... && go vet ./... && go test ./...`
-- [ ] Test count: 2 tests pass (logs fields, captures non-200 status) (no silent deletions)
+- [x] Test injects a `slog.Handler` capturing records; asserts method/path/status/duration logged
+- [x] Status code correctly captured via a wrapped `ResponseWriter`
+- [x] Gate check passes: `go build ./... && go vet ./... && go test ./...`
+- [x] Test count: 2 tests pass (logs fields, captures non-200 status) (no silent deletions)
 
 **Tests**: unit
 **Gate**: quick
@@ -201,10 +201,10 @@ injected `*slog.Logger`.
 
 **Done when**:
 
-- [ ] Middleware puts a `*sessions.Session` in context; `SessionFromContext` returns it
-- [ ] Missing/tampered cookie yields a fresh empty session (no request error)
-- [ ] Gate check passes: `go build ./... && go vet ./... && go test ./...`
-- [ ] Test count: 3 tests pass (new session, round-trip, tampered→fresh) (no silent deletions)
+- [x] Middleware puts a `*sessions.Session` in context; `SessionFromContext` returns it
+- [x] Missing/tampered cookie yields a fresh empty session (no request error)
+- [x] Gate check passes: `go build ./... && go vet ./... && go test ./...`
+- [x] Test count: 3 tests pass (new session, round-trip, tampered→fresh) (no silent deletions)
 
 **Tests**: unit
 **Gate**: quick
@@ -231,10 +231,10 @@ and wiring the injected NotFound handler.
 
 **Done when**:
 
-- [ ] Chain applied in the documented outer→inner order (assert via request through a probe handler)
-- [ ] Unknown route invokes the injected NotFound handler (test uses a stub NotFound)
-- [ ] Gate check passes: `go build ./... && go vet ./... && go test ./...`
-- [ ] Test count: 2 tests pass (chain order/all-applied, NotFound wired) (no silent deletions)
+- [x] Chain applied in the documented outer→inner order (assert via request through a probe handler)
+- [x] Unknown route invokes the injected NotFound handler (test uses a stub NotFound)
+- [x] Gate check passes: `go build ./... && go vet ./... && go test ./...`
+- [x] Test count: 2 tests pass (chain order/all-applied, NotFound wired) (no silent deletions)
 
 **Tests**: unit
 **Gate**: quick
@@ -261,10 +261,10 @@ drains within a timeout.
 
 **Done when**:
 
-- [ ] `Run(ctx)` bound to `:0` returns cleanly when ctx is cancelled (graceful path)
-- [ ] In-flight request completes during drain; drain timeout force-closes and still returns
-- [ ] Gate check passes: `go build ./... && go vet ./... && go test ./...`
-- [ ] Test count: 2 tests pass (graceful drain, timeout force-close) (no silent deletions)
+- [x] `Run(ctx)` bound to `:0` returns cleanly when ctx is cancelled (graceful path)
+- [x] In-flight request completes during drain; drain timeout force-closes and still returns
+- [x] Gate check passes: `go build ./... && go vet ./... && go test ./...`
+- [x] Test count: 2 tests pass (graceful drain, timeout force-close) (no silent deletions)
 
 **Tests**: unit
 **Gate**: quick
@@ -292,10 +292,10 @@ drains within a timeout.
 
 **Done when**:
 
-- [ ] `base.html` shell loads `/static/app.css` + `/static/htmx.min.js` and defines a content block
-- [ ] `home.html` and `not_found.html` define the content block
-- [ ] `htmx.min.js` present under `static/`
-- [ ] Gate check passes: `go build ./...`
+- [x] `base.html` shell loads `/static/app.css` + `/static/htmx.min.js` and defines a content block
+- [x] `home.html` and `not_found.html` define the content block
+- [x] `htmx.min.js` present under `static/`
+- [x] Gate check passes: `go build ./...`
 
 **Tests**: none (assets; exercised by T9/T10 renderer tests)
 **Gate**: build
@@ -322,11 +322,11 @@ and `StaticHandler`.
 
 **Done when**:
 
-- [ ] `NewRenderer` parses embedded templates; parse failure returns error
-- [ ] `Page` renders full shell for a plain request; renders fragment only when `HX-Request: true`
-- [ ] `StaticHandler` serves an embedded asset (200) and returns 404 for a missing one
-- [ ] Gate check passes: `go build ./... && go vet ./... && go test ./...`
-- [ ] Test count: 4 tests pass (full page, fragment, static hit, static 404) (no silent deletions)
+- [x] `NewRenderer` parses embedded templates; parse failure returns error
+- [x] `Page` renders full shell for a plain request; renders fragment only when `HX-Request: true`
+- [x] `StaticHandler` serves an embedded asset (200) and returns 404 for a missing one
+- [x] Gate check passes: `go build ./... && go vet ./... && go test ./...`
+- [x] Test count: 4 tests pass (full page, fragment, static hit, static 404) (no silent deletions)
 
 **Tests**: unit
 **Gate**: quick
@@ -352,11 +352,11 @@ and `StaticHandler`.
 
 **Done when**:
 
-- [ ] `Home` returns 200; body contains the app `<title>` and the `htmx.min.js` script tag
-- [ ] `Home` with `HX-Request: true` returns the fragment only (no `<html>` shell)
-- [ ] `NotFound` returns 404 with a rendered body
-- [ ] Gate check passes: `go build ./... && go vet ./... && go test ./...`
-- [ ] Test count: 3 tests pass (full home, home fragment, 404) (no silent deletions)
+- [x] `Home` returns 200; body contains the app `<title>` and the `htmx.min.js` script tag
+- [x] `Home` with `HX-Request: true` returns the fragment only (no `<html>` shell)
+- [x] `NotFound` returns 404 with a rendered body
+- [x] Gate check passes: `go build ./... && go vet ./... && go test ./...`
+- [x] Test count: 3 tests pass (full home, home fragment, 404) (no silent deletions)
 
 **Tests**: unit
 **Gate**: quick
@@ -384,11 +384,11 @@ and `StaticHandler`.
 
 **Done when**:
 
-- [ ] `New` returns `(*App, error)`; renderer build failure is wrapped (`%w`), no panic
-- [ ] `App.Handler()` end-to-end: `GET /` → 200, `GET /static/app.css` → 200, unknown → 404
-- [ ] A fake `Module` in `Deps.Modules` has its `Mount` called and its route reachable
-- [ ] Gate check passes: `go build ./... && go vet ./... && go test ./...`
-- [ ] Test count: 4 tests pass (root 200, static 200, 404, module-mounted) (no silent deletions)
+- [x] `New` returns `(*App, error)`; renderer build failure is wrapped (`%w`), no panic
+- [x] `App.Handler()` end-to-end: `GET /` → 200, `GET /static/app.css` → 200, unknown → 404
+- [x] A fake `Module` in `Deps.Modules` has its `Mount` called and its route reachable
+- [x] Gate check passes: `go build ./... && go vet ./... && go test ./...`
+- [x] Test count: 4 tests pass (root 200, static 200, 404, module-mounted) (no silent deletions)
 
 **Tests**: unit
 **Gate**: quick
@@ -415,9 +415,9 @@ with `signal.NotifyContext` (SIGINT/SIGTERM); exits non-zero on build error.
 
 **Done when**:
 
-- [ ] `main` wires `signal.NotifyContext` for SIGINT/SIGTERM and passes ctx to `App.Run`
-- [ ] Build error from `New` → log + `os.Exit(1)`; no branching logic beyond glue
-- [ ] Gate check passes: `go build ./...`
+- [x] `main` wires `signal.NotifyContext` for SIGINT/SIGTERM and passes ctx to `App.Run`
+- [x] Build error from `New` → log + `os.Exit(1)`; no branching logic beyond glue
+- [x] Gate check passes: `go build ./...`
 
 **Tests**: none (thin glue; branching-free; shutdown covered by T7, wiring by T11)
 **Gate**: build
@@ -443,11 +443,11 @@ with `signal.NotifyContext` (SIGINT/SIGTERM); exits non-zero on build error.
 
 **Done when**:
 
-- [ ] Asserts no `internal/modules/<A>` imports `internal/modules/<B>/{domain,app}` (A≠B)
-- [ ] Asserts no `internal/modules/*/domain` imports `chi`, `pgx`, `net/http`, sessions, or another module
-- [ ] Passes on the current skeleton (no violations)
-- [ ] Gate check passes: `go build ./... && go vet ./... && go test ./...`
-- [ ] Test count: 2 tests pass (cross-module rule, domain-purity rule) (no silent deletions)
+- [x] Asserts no `internal/modules/<A>` imports `internal/modules/<B>/{domain,app}` (A≠B)
+- [x] Asserts no `internal/modules/*/domain` imports `chi`, `pgx`, `net/http`, sessions, or another module
+- [x] Passes on the current skeleton (no violations)
+- [x] Gate check passes: `go build ./... && go vet ./... && go test ./...`
+- [x] Test count: 2 tests pass (cross-module rule, domain-purity rule) (no silent deletions)
 
 **Tests**: unit
 **Gate**: quick
@@ -473,8 +473,8 @@ with `signal.NotifyContext` (SIGINT/SIGTERM); exits non-zero on build error.
 
 **Done when**:
 
-- [ ] `build`→`go build ./...`, `run`→`go run ./cmd/server`, `test`→`go test ./...`
-- [ ] Gate check passes: `go build ./...`
+- [x] `build`→`go build ./...`, `run`→`go run ./cmd/server`, `test`→`go test ./...`
+- [x] Gate check passes: `go build ./...`
 
 **Tests**: none
 **Gate**: build
