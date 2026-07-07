@@ -8,7 +8,11 @@ import (
 
 	"github.com/gorilla/sessions"
 
+	"github.com/campsite-booking/campsite-booking/internal/platform/config"
+	"github.com/campsite-booking/campsite-booking/internal/platform/health"
 	"github.com/campsite-booking/campsite-booking/internal/platform/httpx"
+	applog "github.com/campsite-booking/campsite-booking/internal/platform/log"
+	"github.com/campsite-booking/campsite-booking/internal/platform/postgres"
 	"github.com/campsite-booking/campsite-booking/internal/platform/web"
 )
 
@@ -18,7 +22,8 @@ type Deps struct {
 	Addr          string
 	Logger        *slog.Logger
 	SessionSecret []byte
-	Modules       []Module // empty for the skeleton
+	Modules       []Module      // empty for the skeleton
+	Pool          health.Pinger // seam ← data-migration; nil skips /healthz
 }
 
 // App holds the built HTTP handler and server for the running application.
@@ -43,9 +48,14 @@ func New(deps Deps) (*App, error) {
 		SessionStore: store,
 		NotFound:     web.NotFound(renderer),
 	})
+	router.Use(applog.Middleware(deps.Logger))
 
 	router.Get("/", web.Home(renderer))
 	router.Handle("/static/*", web.StaticHandler(web.FS))
+
+	if deps.Pool != nil {
+		router.Get("/healthz", health.Handler(deps.Pool))
+	}
 
 	for _, m := range deps.Modules {
 		m.Mount(router)
@@ -58,6 +68,32 @@ func New(deps Deps) (*App, error) {
 			Handler: router,
 		},
 	}, nil
+}
+
+// Bootstrap is the env-driven composition root entrypoint: it loads Config
+// first (aborting with no listener opened on any missing/invalid var),
+// builds the logger and Postgres pool, then delegates to New.
+func Bootstrap(getenv func(string) string, modules []Module) (*App, error) {
+	cfg, err := config.LoadFrom(getenv)
+	if err != nil {
+		return nil, err
+	}
+
+	logger := applog.New(cfg.Log)
+	slog.SetDefault(logger)
+
+	pool, err := postgres.NewPool(context.Background(), postgres.Config{DSN: cfg.DatabaseURL})
+	if err != nil {
+		return nil, fmt.Errorf("build postgres pool: %w", err)
+	}
+
+	return New(Deps{
+		Addr:          fmt.Sprintf(":%d", cfg.HTTP.Port),
+		Logger:        logger,
+		SessionSecret: []byte(cfg.SessionSecret),
+		Modules:       modules,
+		Pool:          pool,
+	})
 }
 
 // Handler exposes the built http.Handler, primarily for httptest.

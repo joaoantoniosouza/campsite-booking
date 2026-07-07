@@ -11,15 +11,9 @@ import (
 )
 
 func main() {
-	logger := slog.Default()
-
-	app, err := bootstrap.New(bootstrap.Deps{
-		Addr:          ":8080",
-		Logger:        logger,
-		SessionSecret: []byte("dev-only-insecure-session-secret-change-me"),
-	})
+	app, err := bootstrap.Bootstrap(os.Getenv, nil)
 	if err != nil {
-		logger.Error("build failed", "error", err)
+		slog.Default().Error("build failed", "error", err)
 		os.Exit(1)
 	}
 
@@ -27,7 +21,7 @@ func main() {
 	defer stop()
 
 	if err := app.Run(ctx); err != nil {
-		logger.Error("server error", "error", err)
+		slog.Default().Error("server error", "error", err)
 		os.Exit(1)
 	}
 }
